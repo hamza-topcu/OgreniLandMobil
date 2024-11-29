@@ -22,9 +22,6 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.welcomeText}>
-                ❤️Yelda❤️
-            </Text>
             <TouchableOpacity onPress={handleSignOut} style={styles.button}>
                 <Text style={styles.buttonText}>Çıkış Yap</Text>
             </TouchableOpacity>
