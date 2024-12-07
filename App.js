@@ -3,9 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './src/screen/LoginScreen';
 import HomeScreen from './src/screen/HomeScreen';
-import PaymentScreen from './src/screen/PaymentScreen';
 import PaymentScreenn from './src/screen/PaymentScreenn';
 import { StripeProvider } from "@stripe/stripe-react-native";
+import GameDetails from './src/screen/GameDetails';
+import AboutScreen from './src/screen/AboutScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,16 @@ export default function App() {
         <Stack.Screen
           name="Payment"
           component={PaymentScreenn}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GameDetails"
+          component={GameDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="About"
+          component={AboutScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

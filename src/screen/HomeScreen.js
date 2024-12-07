@@ -1,18 +1,40 @@
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import { useNavigation } from '@react-navigation/native';
-import { games } from '../data/games';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
 
     const [user, setUser] = useState(null);
+    const [games, setGames] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handlePurchase = (game) => {
-        navigation.navigate("Payment", { game: { name: "Oyun Adı", price: 100 } });
-
+        navigation.navigate("GameDetails", { game });
     };
+
+    const handleAbout = () => {
+        navigation.navigate("About");  // AboutScreen sayfasına yönlendirme
+    };
+
+    useEffect(() => {
+        const fetchGames = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "games"));
+                const gamesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setGames(gamesData);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching games:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchGames();
+    }, []);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -27,34 +49,61 @@ export default function HomeScreen() {
             .catch(error => alert(error.message));
     };
 
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Text style={{ marginTop: 30 }}>Oyunlar Yükleniyor...</Text>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
                 <Text style={styles.signOutButtonText}>Çıkış Yap</Text>
             </TouchableOpacity>
+
             <FlatList
                 data={games}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.gameList}
                 renderItem={({ item }) => (
                     <View style={styles.card}>
+                        <Image source={{ uri: item.logo }} style={styles.gameImage} />
                         <Text style={styles.gameName}>{item.name}</Text>
-                        <Text style={styles.gamePrice}>{item.price} TL</Text>
+                        <Text style={styles.gameDetails}>{item.details}</Text>
                         <TouchableOpacity
                             style={styles.purchaseButton}
                             onPress={() => handlePurchase(item)}
                         >
-                            <Text style={styles.purchaseButtonText}>Satın Al</Text>
+                            <Text style={styles.purchaseButtonText}>Oyuna Git</Text>
                         </TouchableOpacity>
                     </View>
                 )}
             />
+
+            {/* Hakkımızda butonu */}
+            <TouchableOpacity onPress={handleAbout} style={styles.aboutButton}>
+                <Text style={styles.aboutButtonText}>Hakkımızda</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    gameImage: {
+        width: '100%',
+        height: 150,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    gameDetails: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 10,
+    },
     container: {
+        marginTop: 10,
         flex: 1,
         backgroundColor: '#f9f9f9',
     },
@@ -74,7 +123,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     gameList: {
-        paddingTop: 80, // To provide space for the sign-out button
+        paddingTop: 80,
         paddingHorizontal: 20,
     },
     card: {
@@ -93,11 +142,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
-    gamePrice: {
-        fontSize: 16,
-        color: 'green',
-        marginVertical: 5,
-    },
     purchaseButton: {
         backgroundColor: '#0782F9',
         padding: 12,
@@ -107,5 +151,20 @@ const styles = StyleSheet.create({
     purchaseButtonText: {
         color: 'white',
         fontWeight: '700',
+    },
+    // Yeni eklenen Hakkımızda butonunun stili
+    aboutButton: {
+        backgroundColor: '#0782F9',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 25,
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    aboutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
