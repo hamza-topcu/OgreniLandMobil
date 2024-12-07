@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Linking, Platform } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Linking, ScrollView } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 
@@ -66,7 +66,7 @@ export default function GameDetails({ route }) {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Image source={{ uri: game.logo }} style={styles.gameImage} />
             <Text style={styles.gameName}>{game.name}</Text>
             <Text style={styles.gameDetails}>{game.details}</Text>
@@ -97,7 +97,7 @@ export default function GameDetails({ route }) {
                     {loading ? 'İndiriliyor...' : 'Oyunu İndir'}
                 </Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -130,6 +130,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         marginVertical: 10,
+        marginTop: 30,
+        marginBottom: 130,
     },
     downloadButtonImage: {
         backgroundColor: 'green',
