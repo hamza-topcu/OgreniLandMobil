@@ -45,9 +45,15 @@ export default function HomeScreen() {
 
     const handleSignOut = () => {
         auth.signOut()
-            .then(() => navigation.navigate('Login'))
+            .then(() => {
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                });
+            })
             .catch(error => alert(error.message));
     };
+
 
     if (loading) {
         return (

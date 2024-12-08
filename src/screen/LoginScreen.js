@@ -27,14 +27,18 @@ export default function LoginScreen() {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
-                navigation.navigate('Home');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                });
             }
         });
         return unsubscribe;
     }, []);
 
+
     const handleSignUp = () => {
-        setErrorMessage(''); // Hata mesajını sıfırla
+        setErrorMessage('');
         createUserWithEmailAndPassword(auth, userName, password)
             .then((userCredentials) => {
                 const user = userCredentials.user;

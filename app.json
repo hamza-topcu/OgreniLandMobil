@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./resim/logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.examplecompany.unitygameapp"
